@@ -1,0 +1,53 @@
+# Core dependencies
+litellm>=1.30.0
+aiohttp>=3.9.0
+pyyaml>=6.0
+
+# Discord integration
+discord.py>=2.3.0
+
+# Database and storage
+sqlcipher3>=0.5.0
+cryptography>=42.0.0
+
+# Credential management
+keyring>=24.0.0
+
+# Docker for sandboxing
+docker>=7.0.0
+
+# Browser automation
+playwright>=1.40.0
+
+# Embeddings and ML
+sentence-transformers>=2.2.0
+
+# Scheduling
+croniter>=2.0.0
+APScheduler>=3.10.0
+
+# Input validation
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Logging
+structlog>=24.0.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Security
+safety>=3.0.0
+bandit>=1.7.0
+
+# Code quality (dev)
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+isort>=5.12.0

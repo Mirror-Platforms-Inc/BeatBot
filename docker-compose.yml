@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  beatbot:
+    build: .
+    container_name: beatbot
+    volumes:
+      # Mount Docker socket for sandbox creation
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persistent data
+      - beatbot-data:/data
+      # Configuration
+      - ./config:/app/config:ro
+      # Workspace (if needed)
+      - ./workspace:/workspace
+    environment:
+      - BEATBOT_DB_PATH=/data/beatbot.db
+      - BEATBOT_MODEL_PROVIDER=litellm
+      - BEATBOT_MODEL_DEFAULT=ollama/llama3.2
+      - BEATBOT_SANDBOX_ENABLED=true
+      - BEATBOT_REQUIRE_APPROVAL=true
+    stdin_open: true
+    tty: true
+    networks:
+      - beatbot-network
+    restart: unless-stopped
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+
+  # Optional: Ollama service for local LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: beatbot-ollama
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - beatbot-network
+    restart: unless-stopped
+    # Uncomment if you have GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  beatbot-data:
+    driver: local
+  ollama-data:
+    driver: local
+
+networks:
+  beatbot-network:
+    driver: bridge

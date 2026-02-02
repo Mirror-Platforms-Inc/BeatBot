@@ -1,0 +1,134 @@
+# BeatBot Default Configuration
+
+# Model Configuration
+model:
+  provider: litellm  # Options: litellm, ollama
+  default_model: ollama/gemma3:12b
+  fallback_models:
+    - ollama/mistral
+    - ollama/qwen2.5
+  temperature: 0.7
+  max_tokens: 4096
+  timeout: 120  # seconds
+
+# Security Settings
+security:
+  # Sandboxing
+  sandbox_enabled: true
+  sandbox_timeout: 60  # seconds
+  sandbox_memory_limit: 512m
+  sandbox_cpu_limit: 1.0
+  
+  # Permissions
+  require_approval: true
+  approval_timeout: 300  # 5 minutes
+  auto_approve_safe_commands: false
+  
+  # Allowed directories (only these can be accessed)
+  allowed_directories:
+    - ~/Documents/beatbot-workspace
+  
+  # Command whitelist (if empty, all commands require approval)
+  command_whitelist: []
+  
+  # Command blacklist (always deny)
+  command_blacklist:
+    - rm -rf
+    - mkfs
+    - dd if=
+    - ":(){ :|:& };:"  # Fork bomb
+  
+  # Rate limiting
+  rate_limit:
+    enabled: true
+    max_commands_per_minute: 10
+    max_api_calls_per_minute: 30
+
+# Memory/Storage Settings
+storage:
+  database_path: ~/.beatbot/data.db
+  encryption_enabled: true
+  
+  # Vector embeddings
+  use_embeddings: true
+  embedding_model: all-MiniLM-L6-v2
+  
+  # Retention policies
+  retention:
+    conversation_days: 90
+    audit_log_days: 365
+    max_conversation_items: 10000
+
+# Heartbeat/Self-Prompting Settings
+heartbeat:
+  enabled: true
+  interval: 3600  # 1 hour
+  
+  # Quiet hours (no self-prompting during these times)
+  quiet_hours:
+    enabled: true
+    start: "22:00"
+    end: "08:00"
+    timezone: local
+  
+  # Conditions for self-prompting
+  triggers:
+    - type: time
+      schedule: "0 9 * * *"  # Daily at 9 AM
+      action: morning_briefing
+    - type: reminder
+      check_interval: 600  # 10 minutes
+
+# Messaging Platform Settings
+messaging:
+  platform: discord  # Options: discord, slack, telegram
+  
+  discord:
+    # Token stored in keyring or env var BEATBOT_DISCORD_TOKEN
+    command_prefix: "!"
+    status_message: "Securing your commands"
+    max_message_length: 2000
+    
+    # Security: Only these users can interact with the bot
+    # REPLACE WITH YOUR DISCORD USER ID
+    allowed_users: 
+      - "123456789012345678"
+    
+    # Optional: Limit to specific channels
+    allowed_channels: []
+
+# Logging and Audit
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  format: json
+  
+  # Audit logging
+  audit:
+    enabled: true
+    log_all_commands: true
+    log_api_calls: true
+    log_security_events: true
+    rotation:
+      max_size_mb: 100
+      backup_count: 10
+
+# Skills Settings
+skills:
+  enabled_builtin_skills:
+    - system_info
+    - file_manager
+    - web_search
+    - code_executor
+    - scheduler
+  
+  # Custom skills directory
+  custom_skills_path: ~/.beatbot/custom_skills
+  
+  # Skill execution timeout
+  skill_timeout: 300  # 5 minutes
+
+# Development Settings
+development:
+  debug_mode: false
+  mock_approvals: false  # Auto-approve in dev mode
+  disable_sandbox: false  # WARNING: Only for testing
